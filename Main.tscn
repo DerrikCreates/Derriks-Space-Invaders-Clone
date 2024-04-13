@@ -1,0 +1,59 @@
+[gd_scene load_steps=9 format=3 uid="uid://hopcx25rwmgv"]
+
+[ext_resource type="PackedScene" uid="uid://drw8355acs8am" path="res://wall.tscn" id="1_ycu1t"]
+[ext_resource type="Texture2D" uid="uid://cyctvvtixqny6" path="res://Circle.png" id="2_il7d8"]
+[ext_resource type="PackedScene" uid="uid://biy6urvyiyi16" path="res://Enemy.tscn" id="2_qtpug"]
+[ext_resource type="Script" path="res://EnemyBox.cs" id="3_cm1vh"]
+[ext_resource type="PackedScene" uid="uid://b5ml0bxer8dyj" path="res://Projectile.tscn" id="5_2eila"]
+[ext_resource type="PackedScene" uid="uid://dv61eekw20tav" path="res://Player.tscn" id="5_qnp4l"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_picbv"]
+size = Vector2(100, 100)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_awv1p"]
+size = Vector2(1558, 134)
+
+[node name="Node2D" type="Node2D"]
+
+[node name="Camera2D" type="Camera2D" parent="."]
+
+[node name="WallLeft" parent="." groups=["Wall"] instance=ExtResource("1_ycu1t")]
+position = Vector2(-650, -28.5)
+scale = Vector2(1, 7.87)
+
+[node name="WallRight" parent="." groups=["Wall"] instance=ExtResource("1_ycu1t")]
+position = Vector2(650, -30)
+scale = Vector2(1, 7.86)
+
+[node name="Enemy Box" type="Area2D" parent="." node_paths=PackedStringArray("BoundingBox")]
+position = Vector2(0, -310)
+script = ExtResource("3_cm1vh")
+BoundingBox = NodePath("BB Of Alive")
+_enemyScene = ExtResource("2_qtpug")
+RowSpacing = 25.0
+ColumnSpacing = 25.0
+speed = 300.0
+
+[node name="Circle" type="Sprite2D" parent="Enemy Box"]
+modulate = Color(0, 0.682353, 1, 1)
+scale = Vector2(0.54, 0.54)
+texture = ExtResource("2_il7d8")
+
+[node name="BB Of Alive" type="CollisionShape2D" parent="Enemy Box"]
+shape = SubResource("RectangleShape2D_picbv")
+
+[node name="Player" parent="." instance=ExtResource("5_qnp4l")]
+position = Vector2(0, 311)
+Projectile = ExtResource("5_2eila")
+
+[node name="EndZoneArea" type="Area2D" parent="." groups=["End"]]
+position = Vector2(0, 293)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="EndZoneArea"]
+position = Vector2(0, 47)
+shape = SubResource("RectangleShape2D_awv1p")
+debug_color = Color(0.998633, 0, 0.136857, 0.42)
+metadata/_edit_group_ = true
+
+[connection signal="area_entered" from="Enemy Box" to="Enemy Box" method="OnAreaEntered"]
+[connection signal="body_entered" from="Enemy Box" to="Enemy Box" method="OnBodyEnter"]
